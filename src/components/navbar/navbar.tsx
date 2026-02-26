@@ -1,11 +1,24 @@
 'use client'
 import { useState } from 'react'
-import { ShoppingBag, Search, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
+import Cart from '@/pages/cart'
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)
+  const links = [
+    {
+      id: 0,
+      title: 'Shop',
+      url: '/shop',
+    },
+    {
+      id: 1,
+      title: 'Collections',
+      url: '/collections',
+    },
+  ]
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -15,13 +28,13 @@ const Navbar = () => {
         </button>
 
         <div className="hidden md:flex items-center gap-8">
-          {['Shop', 'Collections', 'About'].map((item) => (
+          {links.map((item) => (
             <Link
-              key={item}
-              href="#"
+              key={item.id}
+              href={item.url}
               className="text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
             >
-              {item}
+              {item.title}
             </Link>
           ))}
         </div>
@@ -33,15 +46,9 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-5">
-          <button className="text-muted-foreground hover:text-foreground transition-colors">
-            <Search size={18} />
-          </button>
-          <button className="text-muted-foreground hover:text-foreground transition-colors relative">
-            <ShoppingBag size={18} />
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-gradient-gold text-[10px] font-body font-semibold text-primary-foreground flex items-center justify-center">
-              0
-            </span>
-          </button>
+          <div className="mt-2">
+            <Cart />
+          </div>
         </div>
       </div>
 
