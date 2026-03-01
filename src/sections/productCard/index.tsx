@@ -33,14 +33,15 @@ function ProductCardPage() {
   }
 
   if (loading) {
-    return <></>
+    return <> Loading...</>
   }
 
   return (
     <div className="grid grid-cols-4 items-center justify-center gap-10">
-      {data.slice(0, 5).map((product: Product, index: number) => {
+      {data?.slice(0, 5)?.map((product: Product, index: number) => {
         return (
           <ProductCard
+            id={product?.id}
             key={product?.id}
             name={product?.name}
             image={product?.images}

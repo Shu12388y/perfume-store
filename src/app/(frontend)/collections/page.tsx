@@ -1,5 +1,5 @@
 import React from 'react'
-import CollectionPage from '@/pages/collectionPage'
+import CollectionPage from '@/sections/collectionPage'
 
 function Page() {
   return (

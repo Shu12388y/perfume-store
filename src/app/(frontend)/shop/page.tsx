@@ -1,5 +1,6 @@
+'use client'
 import React from 'react'
-import ProductStorePage from '@/pages/productPage'
+import ProductStorePage from '@/sections/productPage'
 
 function Page() {
   return (

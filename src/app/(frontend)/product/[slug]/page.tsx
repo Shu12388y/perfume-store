@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
-import { motion, AnimatePresence, useScroll } from 'motion/react'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   ShoppingBag,
   Heart,
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 
 
+
 interface Review {
   id: number
   name: string
@@ -37,7 +38,6 @@ interface RelatedProduct {
   image: string
   category: string
 }
-
 
 const PRODUCT = {
   name: 'Velvet Noir Blazer',
@@ -64,37 +64,93 @@ const PRODUCT = {
   ],
   sizes: ['XS', 'S', 'M', 'L', 'XL'],
   colors: [
-    { name: 'Midnight Black', hex: '#0d0d0d', images: [
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=900&q=85',
-      'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=900&q=85',
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=85',
-      'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=85',
-    ]},
-    { name: 'Deep Burgundy', hex: '#4a1520', images: [
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=900&q=85',
-      'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=85',
-      'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=900&q=85',
-    ]},
-    { name: 'Forest Night', hex: '#1a2e1a', images: [
-      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&q=85',
-      'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=85',
-    ]},
+    {
+      name: 'Midnight Black',
+      hex: '#0d0d0d',
+      images: [
+        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=900&q=85',
+        'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=900&q=85',
+        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=85',
+        'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=85',
+      ],
+    },
+    {
+      name: 'Deep Burgundy',
+      hex: '#4a1520',
+      images: [
+        'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=900&q=85',
+        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=85',
+        'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=900&q=85',
+      ],
+    },
+    {
+      name: 'Forest Night',
+      hex: '#1a2e1a',
+      images: [
+        'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&q=85',
+        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=85',
+      ],
+    },
   ],
 }
 
 const REVIEWS: Review[] = [
-  { id: 1, name: 'Margaux L.', rating: 5, date: 'Jan 12, 2025', verified: true, body: 'Absolutely stunning piece. The velvet quality is exceptional — rich and deep, nothing like fast fashion. I wore it to three events in one week and received compliments at every single one.' },
-  { id: 2, name: 'Sofia R.', rating: 5, date: 'Dec 28, 2024', verified: true, body: 'Fits like a dream. I sized up from my usual S to M for a more relaxed shoulder and it was the right call. The lining is incredibly smooth.' },
-  { id: 3, name: 'Ines K.', rating: 4, date: 'Dec 3, 2024', verified: true, body: 'Beautiful blazer. The only reason for 4 stars is the delivery took a bit longer than expected. The product itself is flawless — structured yet comfortable.' },
+  {
+    id: 1,
+    name: 'Margaux L.',
+    rating: 5,
+    date: 'Jan 12, 2025',
+    verified: true,
+    body: 'Absolutely stunning piece. The velvet quality is exceptional — rich and deep, nothing like fast fashion. I wore it to three events in one week and received compliments at every single one.',
+  },
+  {
+    id: 2,
+    name: 'Sofia R.',
+    rating: 5,
+    date: 'Dec 28, 2024',
+    verified: true,
+    body: 'Fits like a dream. I sized up from my usual S to M for a more relaxed shoulder and it was the right call. The lining is incredibly smooth.',
+  },
+  {
+    id: 3,
+    name: 'Ines K.',
+    rating: 4,
+    date: 'Dec 3, 2024',
+    verified: true,
+    body: 'Beautiful blazer. The only reason for 4 stars is the delivery took a bit longer than expected. The product itself is flawless — structured yet comfortable.',
+  },
 ]
 
 const RELATED: RelatedProduct[] = [
-  { id: 1, name: 'Silk Slip Dress', price: 320, category: 'Dresses', image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80' },
-  { id: 2, name: 'Cashmere Turtleneck', price: 280, category: 'Tops', image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80' },
-  { id: 3, name: 'Wide Leg Trousers', price: 195, category: 'Bottoms', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80' },
-  { id: 4, name: 'Merino Wrap Coat', price: 540, category: 'Outerwear', image: 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=600&q=80' },
+  {
+    id: 1,
+    name: 'Silk Slip Dress',
+    price: 320,
+    category: 'Dresses',
+    image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80',
+  },
+  {
+    id: 2,
+    name: 'Cashmere Turtleneck',
+    price: 280,
+    category: 'Tops',
+    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80',
+  },
+  {
+    id: 3,
+    name: 'Wide Leg Trousers',
+    price: 195,
+    category: 'Bottoms',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80',
+  },
+  {
+    id: 4,
+    name: 'Merino Wrap Coat',
+    price: 540,
+    category: 'Outerwear',
+    image: 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=600&q=80',
+  },
 ]
-
 
 function Stars({ rating, size = 12 }: { rating: number; size?: number }) {
   return (
@@ -103,23 +159,26 @@ function Stars({ rating, size = 12 }: { rating: number; size?: number }) {
         <Star
           key={s}
           size={size}
-          className={s <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}
+          className={
+            s <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'
+          }
         />
       ))}
     </div>
   )
 }
 
-
 function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="border-b border-border">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between py-4 text-left"
       >
-        <span className="text-xs uppercase tracking-widest font-medium text-foreground">{title}</span>
+        <span className="text-xs uppercase tracking-widest font-medium text-foreground">
+          {title}
+        </span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown size={14} className="text-muted-foreground" />
         </motion.div>
@@ -142,7 +201,6 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
     </div>
   )
 }
-
 
 function ImageGallery({ images }: { images: string[] }) {
   const [active, setActive] = useState(0)
@@ -185,7 +243,7 @@ function ImageGallery({ images }: { images: string[] }) {
         )}
         <div className="absolute top-4 right-4 z-10 flex gap-2">
           <button
-            onClick={() => setZoomed(v => !v)}
+            onClick={() => setZoomed((v) => !v)}
             className="w-8 h-8 bg-background/80 backdrop-blur rounded-full flex items-center justify-center hover:bg-background transition-colors"
           >
             <ZoomIn size={13} />
@@ -202,7 +260,7 @@ function ImageGallery({ images }: { images: string[] }) {
             transition={{ duration: 0.25 }}
             className={`aspect-[3/4] overflow-hidden rounded-sm bg-secondary relative ${zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
             onMouseMove={handleMouseMove}
-            onClick={() => setZoomed(v => !v)}
+            onClick={() => setZoomed((v) => !v)}
           >
             <motion.img
               src={images[active]}
@@ -210,7 +268,11 @@ function ImageGallery({ images }: { images: string[] }) {
               className="w-full h-full object-cover"
               animate={
                 zoomed
-                  ? { scale: 2, x: `${-(mousePos.x - 50) * 0.8}%`, y: `${-(mousePos.y - 50) * 0.8}%` }
+                  ? {
+                      scale: 2,
+                      x: `${-(mousePos.x - 50) * 0.8}%`,
+                      y: `${-(mousePos.y - 50) * 0.8}%`,
+                    }
                   : { scale: 1, x: 0, y: 0 }
               }
               transition={{ duration: zoomed ? 0 : 0.4 }}
@@ -221,7 +283,7 @@ function ImageGallery({ images }: { images: string[] }) {
         {/* Mobile prev/next */}
         <div className="flex sm:hidden justify-between mt-3 gap-2">
           <button
-            onClick={() => setActive(v => Math.max(0, v - 1))}
+            onClick={() => setActive((v) => Math.max(0, v - 1))}
             disabled={active === 0}
             className="flex-1 h-10 border border-border rounded-sm flex items-center justify-center disabled:opacity-30"
           >
@@ -231,7 +293,7 @@ function ImageGallery({ images }: { images: string[] }) {
             {active + 1} / {images.length}
           </span>
           <button
-            onClick={() => setActive(v => Math.min(images.length - 1, v + 1))}
+            onClick={() => setActive((v) => Math.min(images.length - 1, v + 1))}
             disabled={active === images.length - 1}
             className="flex-1 h-10 border border-border rounded-sm flex items-center justify-center disabled:opacity-30"
           >
@@ -280,9 +342,7 @@ function AddedToast({ visible }: { visible: boolean }) {
   )
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
-export default function ProductDetailPage() {
+export default function Page() {
   const [selectedColor, setSelectedColor] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -303,29 +363,13 @@ export default function ProductDetailPage() {
     setTimeout(() => setAddedToCart(false), 3000)
   }
 
-  const stickyRef = useRef<HTMLDivElement>(null)
-  const { scrollY } = useScroll()
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-
-      {/* ── Breadcrumb ── */}
-      <div className="border-b border-border px-6 md:px-16 py-3">
-        <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-body">
-          <a href="#" className="hover:text-foreground transition-colors">Home</a>
-          <span>/</span>
-          <a href="#" className="hover:text-foreground transition-colors">{PRODUCT.collection}</a>
-          <span>/</span>
-          <a href="#" className="hover:text-foreground transition-colors">{PRODUCT.category}</a>
-          <span>/</span>
-          <span className="text-foreground">{PRODUCT.name}</span>
-        </nav>
-      </div>
+    
 
       {/* ── Main Content ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-10 lg:gap-20 items-start">
-
           {/* LEFT: Gallery */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -355,7 +399,10 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Title */}
-            <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
+            <h1
+              className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-1"
+              style={{ letterSpacing: '-0.02em' }}
+            >
               {PRODUCT.name}
             </h1>
             <p className="text-sm text-muted-foreground font-body mb-4">{PRODUCT.subtitle}</p>
@@ -371,7 +418,9 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-8">
               <span className="font-display text-2xl text-foreground">${PRODUCT.price}</span>
-              <span className="text-sm text-muted-foreground line-through font-body">${PRODUCT.comparePrice}</span>
+              <span className="text-sm text-muted-foreground line-through font-body">
+                ${PRODUCT.comparePrice}
+              </span>
               <span className="text-xs bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 px-2 py-0.5 rounded-sm font-medium">
                 -{discount}%
               </span>
@@ -398,7 +447,10 @@ export default function ProductDetailPage() {
                     className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ${
                       selectedColor === i ? 'border-foreground scale-110' : 'border-transparent'
                     }`}
-                    style={{ backgroundColor: color.hex, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.15)' }}
+                    style={{
+                      backgroundColor: color.hex,
+                      boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.15)',
+                    }}
                   />
                 ))}
               </div>
@@ -407,7 +459,9 @@ export default function ProductDetailPage() {
             {/* Size selector */}
             <div className="mb-7">
               <div className="flex items-center justify-between mb-3">
-                <p className={`text-xs uppercase tracking-widest font-medium transition-colors ${sizeError ? 'text-red-500' : 'text-foreground'}`}>
+                <p
+                  className={`text-xs uppercase tracking-widest font-medium transition-colors ${sizeError ? 'text-red-500' : 'text-foreground'}`}
+                >
                   {sizeError ? 'Please select a size' : 'Size'}
                 </p>
                 <button className="text-xs text-muted-foreground underline underline-offset-2 font-body hover:text-foreground transition-colors">
@@ -418,14 +472,17 @@ export default function ProductDetailPage() {
                 {PRODUCT.sizes.map((size) => (
                   <motion.button
                     key={size}
-                    onClick={() => { setSelectedSize(size); setSizeError(false) }}
+                    onClick={() => {
+                      setSelectedSize(size)
+                      setSizeError(false)
+                    }}
                     whileTap={{ scale: 0.95 }}
                     className={`min-w-[3rem] h-10 px-3 text-xs uppercase tracking-widest rounded-sm border transition-all duration-150 ${
                       selectedSize === size
                         ? 'border-foreground bg-foreground text-background'
                         : sizeError
-                        ? 'border-red-300 text-muted-foreground hover:border-foreground hover:text-foreground'
-                        : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
+                          ? 'border-red-300 text-muted-foreground hover:border-foreground hover:text-foreground'
+                          : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
                     }`}
                   >
                     {size}
@@ -439,14 +496,14 @@ export default function ProductDetailPage() {
               {/* Quantity */}
               <div className="flex items-center border border-border rounded-sm">
                 <button
-                  onClick={() => setQuantity(v => Math.max(1, v - 1))}
+                  onClick={() => setQuantity((v) => Math.max(1, v - 1))}
                   className="w-10 h-12 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Minus size={13} />
                 </button>
                 <span className="w-8 text-center text-sm font-body">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(v => v + 1)}
+                  onClick={() => setQuantity((v) => v + 1)}
                   className="w-10 h-12 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Plus size={13} />
@@ -465,7 +522,7 @@ export default function ProductDetailPage() {
 
               {/* Wishlist */}
               <motion.button
-                onClick={() => setWishlisted(v => !v)}
+                onClick={() => setWishlisted((v) => !v)}
                 whileTap={{ scale: 0.9 }}
                 className="w-12 h-12 border border-border rounded-sm flex items-center justify-center hover:border-foreground transition-colors"
               >
@@ -488,9 +545,14 @@ export default function ProductDetailPage() {
                 { icon: RotateCcw, label: 'Free Returns', sub: 'Within 30 days' },
                 { icon: Shield, label: 'Authenticity', sub: 'Verified genuine' },
               ].map(({ icon: Icon, label, sub }) => (
-                <div key={label} className="flex flex-col items-center text-center gap-1.5 py-3 rounded-sm bg-secondary/50">
+                <div
+                  key={label}
+                  className="flex flex-col items-center text-center gap-1.5 py-3 rounded-sm bg-secondary/50"
+                >
                   <Icon size={14} className="text-muted-foreground" />
-                  <p className="text-[10px] uppercase tracking-wider text-foreground font-medium leading-none">{label}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-foreground font-medium leading-none">
+                    {label}
+                  </p>
                   <p className="text-[9px] text-muted-foreground font-body leading-tight">{sub}</p>
                 </div>
               ))}
@@ -519,8 +581,14 @@ export default function ProductDetailPage() {
               </Accordion>
               <Accordion title="Shipping & Returns">
                 <div className="space-y-3">
-                  <p>Complimentary standard shipping on orders over $200. Express and overnight options available at checkout.</p>
-                  <p>Returns accepted within 30 days of delivery. Items must be unworn, unwashed, and with all original tags attached.</p>
+                  <p>
+                    Complimentary standard shipping on orders over $200. Express and overnight
+                    options available at checkout.
+                  </p>
+                  <p>
+                    Returns accepted within 30 days of delivery. Items must be unworn, unwashed, and
+                    with all original tags attached.
+                  </p>
                   <p>SKU: {PRODUCT.sku}</p>
                 </div>
               </Accordion>
@@ -533,23 +601,30 @@ export default function ProductDetailPage() {
       <section className="border-t border-border bg-secondary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-16">
           <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-12">
-
             {/* Summary */}
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3 font-body">Customer Reviews</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3 font-body">
+                Customer Reviews
+              </p>
               <div className="flex items-baseline gap-3 mb-3">
                 <span className="font-display text-5xl">{PRODUCT.rating}</span>
                 <span className="text-sm text-muted-foreground font-body">/ 5</span>
               </div>
               <Stars rating={PRODUCT.rating} size={16} />
-              <p className="text-xs text-muted-foreground mt-2 font-body">Based on {PRODUCT.reviewCount} reviews</p>
+              <p className="text-xs text-muted-foreground mt-2 font-body">
+                Based on {PRODUCT.reviewCount} reviews
+              </p>
 
               {/* Rating bars */}
               <div className="mt-6 space-y-2">
                 {[5, 4, 3, 2, 1].map((star) => {
-                  const pct = star === 5 ? 78 : star === 4 ? 16 : star === 3 ? 4 : star === 2 ? 1 : 1
+                  const pct =
+                    star === 5 ? 78 : star === 4 ? 16 : star === 3 ? 4 : star === 2 ? 1 : 1
                   return (
-                    <div key={star} className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <div
+                      key={star}
+                      className="flex items-center gap-3 text-xs text-muted-foreground"
+                    >
                       <span className="w-3">{star}</span>
                       <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
                         <motion.div
@@ -596,7 +671,9 @@ export default function ProductDetailPage() {
                     </div>
                     <p className="text-[10px] text-muted-foreground font-body">{review.date}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground font-body leading-relaxed mt-3">{review.body}</p>
+                  <p className="text-sm text-muted-foreground font-body leading-relaxed mt-3">
+                    {review.body}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -609,10 +686,17 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-16">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2 font-body">Complete the Look</p>
-              <h2 className="font-display text-3xl" style={{ letterSpacing: '-0.02em' }}>You May Also Like</h2>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2 font-body">
+                Complete the Look
+              </p>
+              <h2 className="font-display text-3xl" style={{ letterSpacing: '-0.02em' }}>
+                You May Also Like
+              </h2>
             </div>
-            <a href="#" className="hidden sm:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              href="#"
+              className="hidden sm:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+            >
               View all <ArrowRight size={12} />
             </a>
           </div>
@@ -635,8 +719,12 @@ export default function ProductDetailPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5 font-body">{product.category}</p>
-                <h4 className="font-display text-base text-foreground leading-tight mb-1">{product.name}</h4>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5 font-body">
+                  {product.category}
+                </p>
+                <h4 className="font-display text-base text-foreground leading-tight mb-1">
+                  {product.name}
+                </h4>
                 <p className="text-sm font-body text-foreground">${product.price}</p>
               </motion.a>
             ))}

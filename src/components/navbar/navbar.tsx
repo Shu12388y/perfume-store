@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
-import Cart from '@/pages/cart'
+import Cart from '@/sections/cart'
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)

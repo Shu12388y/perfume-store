@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { get_products } from '@/services/product.services'
+import { get_product, get_products } from '@/services/product.services'
 
 const initialState = {
   loading: false,
   error: '',
   data: [],
+  product_data: {},
 }
 
 export const ProductSlice = createSlice({
@@ -24,6 +25,17 @@ export const ProductSlice = createSlice({
         state.loading = false
         state.data = []
         state.error = (action.error as string) || 'Internal Server Error'
+      })
+      .addCase(get_product.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(get_product.fulfilled, (state, action) => {
+        state.product_data = action.payload
+        state.loading = false
+      })
+      .addCase(get_product.rejected, (state, action) => {
+        state.loading = false
+        state.error = (action.error as string) || 'Something went wrong'
       })
   },
 })

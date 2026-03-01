@@ -2,8 +2,8 @@
 
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { SlidersHorizontal, X, ChevronDown, LayoutGrid, LayoutList, Search } from 'lucide-react'
-import ProductCardPage from '@/pages/productCard/index'
+import { SlidersHorizontal, X, ChevronDown, Search } from 'lucide-react'
+import ProductCardPage from '@/sections/productCard/index'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -155,7 +155,6 @@ export default function ProductStorePage() {
   const [sortBy, setSortBy] = useState('featured')
   const [searchQuery, setSearchQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
-  const [gridView, setGridView] = useState<'grid' | 'list'>('grid')
   const [sortOpen, setSortOpen] = useState(false)
   const [showNew, setShowNew] = useState(false)
   const [showBestseller, setShowBestseller] = useState(false)

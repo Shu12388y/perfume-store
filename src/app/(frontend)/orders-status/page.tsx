@@ -240,7 +240,7 @@ function TrackingTimeline({ events }: { events: TrackingEvent[] }) {
         >
           {/* Line + dot */}
           <div className="flex flex-col items-center">
-            <div className={`w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 mt-1 ${i === 0 ? 'bg-foreground border-foreground' : 'bg-background border-border'}`} />
+            <div className={`w-2.5 h-2.5 rounded-full border-2 shrink-0 mt-1 ${i === 0 ? 'bg-foreground border-foreground' : 'bg-background border-border'}`} />
             {i < events.length - 1 && <div className="w-px flex-1 bg-border my-1" />}
           </div>
 
@@ -360,8 +360,6 @@ function ReviewModal({ item, onClose }: { item: OrderItem; onClose: () => void }
 // ─── Order Card ───────────────────────────────────────────────────────────────
 
 function OrderCard({ order, onSelect }: { order: Order; onSelect: () => void }) {
-  const cfg = STATUS_CONFIG[order.status]
-  const Icon = cfg.icon
 
   return (
     <motion.div
@@ -404,12 +402,12 @@ function OrderCard({ order, onSelect }: { order: Order; onSelect: () => void }) 
         <div className="flex gap-3 items-center">
           <div className="flex -space-x-2">
             {order.items.slice(0, 3).map(item => (
-              <div key={item.id} className="w-12 h-12 rounded-sm overflow-hidden border-2 border-background bg-secondary flex-shrink-0">
+              <div key={item.id} className="w-12 h-12 rounded-sm overflow-hidden border-2 border-background bg-secondary shrink-0">
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
             ))}
             {order.items.length > 3 && (
-              <div className="w-12 h-12 rounded-sm border-2 border-background bg-secondary flex items-center justify-center text-[10px] font-medium text-muted-foreground flex-shrink-0">
+              <div className="w-12 h-12 rounded-sm border-2 border-background bg-secondary flex items-center justify-center text-[10px] font-medium text-muted-foreground shrink-0">
                 +{order.items.length - 3}
               </div>
             )}
@@ -549,7 +547,7 @@ function OrderDetail({ order, onBack }: { order: Order; onBack: () => void }) {
             <div className="divide-y divide-border">
               {order.items.map(item => (
                 <div key={item.id} className="flex gap-4 px-5 py-4 items-start">
-                  <div className="w-16 h-16 flex-shrink-0 rounded-sm overflow-hidden bg-secondary border border-border">
+                  <div className="w-16 h-16 shrink-0 rounded-sm overflow-hidden bg-secondary border border-border">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -557,7 +555,7 @@ function OrderDetail({ order, onBack }: { order: Order; onBack: () => void }) {
                     <p className="text-[11px] text-muted-foreground font-body mb-2">{item.variant}</p>
                     <p className="text-xs text-muted-foreground font-body">Qty: {item.qty}</p>
                   </div>
-                  <div className="text-right flex-shrink-0">
+                  <div className="text-right shrink-0">
                     <p className="text-sm font-medium text-foreground font-body mb-2">${(item.price * item.qty).toFixed(2)}</p>
                     <div className="flex flex-col gap-1 items-end">
                       {order.status === 'delivered' && (
@@ -616,21 +614,21 @@ function OrderDetail({ order, onBack }: { order: Order; onBack: () => void }) {
             </div>
             <div className="px-5 py-4 space-y-4 text-sm font-body">
               <div className="flex gap-3">
-                <MapPin size={14} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                <MapPin size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Address</p>
                   <p className="text-foreground text-sm leading-relaxed">{order.shippingAddress}</p>
                 </div>
               </div>
               <div className="flex gap-3">
-                <Truck size={14} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                <Truck size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Carrier</p>
                   <p className="text-foreground">{order.carrier}</p>
                 </div>
               </div>
               <div className="flex gap-3">
-                <Package size={14} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                <Package size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Payment</p>
                   <p className="text-foreground">{order.paymentMethod}</p>
