@@ -1,6 +1,9 @@
 import type { CollectionConfig } from 'payload'
 export const Variants: CollectionConfig = {
   slug: 'variants',
+  access:{
+    read:()=>true
+  },
   fields: [
     {
       name: 'title',
@@ -22,4 +25,5 @@ export const Variants: CollectionConfig = {
       type: 'text',
     },
   ],
+  timestamps:true
 }

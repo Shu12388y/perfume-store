@@ -2,7 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 export const Products: CollectionConfig = {
   slug: 'products',
-  auth:false,
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: 'name',
@@ -40,4 +42,5 @@ export const Products: CollectionConfig = {
       ],
     },
   ],
+  timestamps:true
 }
