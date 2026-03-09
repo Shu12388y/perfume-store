@@ -14,12 +14,23 @@ import { Orders } from './collections/Orders'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    dashboard:{
+      widgets:[
+        {
+          slug:'shipping',
+          ComponentPath:'/components/shipping/UserStatsWidget',
+          minWidth:'small',
+          maxWidth:'full'
+        }
+      ]
+    }
   },
   collections: [Users, Media, Products, Variants,Orders],
   editor: lexicalEditor(),

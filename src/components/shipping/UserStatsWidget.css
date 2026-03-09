@@ -1,0 +1,37 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  background-color: lightgrey;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 320px;
+}
+
+.form-box h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+}
+
+.logout{
+    color:red;
+    font-size: 16px;
+    
+}

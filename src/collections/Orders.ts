@@ -1,10 +1,11 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadHandler, PayloadRequest } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
   access: {
     read: () => true,
     create: () => true,
+    update: () => true,
   },
   fields: [
     // address info
@@ -57,5 +58,17 @@ export const Orders: CollectionConfig = {
       defaultValue: 'INITIAL',
     },
   ],
-  timestamps:true
+
+  endpoints: [
+    {
+      path: ':/id',
+      method: 'patch',
+      handler: async (req) => {
+        const data = req.json ? await req.json() : null;
+        console.log(data)
+        return Response.json({message:"succes"})
+      },
+    },
+  ],
+  timestamps: true,
 }
