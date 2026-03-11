@@ -5,8 +5,8 @@ import Footer from '@/components/footer/footer'
 import ReduxProvider from '@/provider/reduxProvider'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: 'Perfume store',
+  title: 'FayaKun Attar',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {

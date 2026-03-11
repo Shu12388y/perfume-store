@@ -1,11 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { get_product, get_products } from '@/services/product.services'
+import type { Product } from '@/payload-types'
 
-const initialState = {
+const initialState: {
+  loading: boolean
+  error: string
+  data: Product[]
+  product_data: Product | null
+} = {
   loading: false,
   error: '',
   data: [],
-  product_data: {},
+  product_data: null,
 }
 
 export const ProductSlice = createSlice({

@@ -2,15 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import InstagramSection from '@/components/instagramSection/instagramSection'
 import Newsletter from '@/components/newsletter/newsletter'
 import CategorySection from '@/components/categorySection/categorySection'
-
+import ProductCardSection from '@/sections/productSection'
 
 const HERO_SLIDES = [
   {
@@ -26,7 +22,7 @@ const HERO_SLIDES = [
     image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1800&q=90',
     tag: 'Just Arrived',
     title: ['Structured', 'Precision'],
-    sub: 'The Men\'s Edit — SS26',
+    sub: "The Men's Edit — SS26",
     cta: 'Explore Men',
     ctaLink: '#',
     align: 'right',
@@ -42,12 +38,6 @@ const HERO_SLIDES = [
   },
 ]
 
-
-
-
-
-
-
 function AnnouncementBar() {
   const messages = [
     'Complimentary shipping on orders over $200',
@@ -56,7 +46,7 @@ function AnnouncementBar() {
   ]
   const [idx, setIdx] = useState(0)
   useEffect(() => {
-    const t = setInterval(() => setIdx(v => (v + 1) % messages.length), 3500)
+    const t = setInterval(() => setIdx((v) => (v + 1) % messages.length), 3500)
     return () => clearInterval(t)
   }, [])
 
@@ -78,8 +68,6 @@ function AnnouncementBar() {
   )
 }
 
-
-
 // ─── Hero Slider ──────────────────────────────────────────────────────────────
 
 function HeroSlider() {
@@ -89,7 +77,7 @@ function HeroSlider() {
   useEffect(() => {
     const t = setInterval(() => {
       setDirection(1)
-      setCurrent(v => (v + 1) % HERO_SLIDES.length)
+      setCurrent((v) => (v + 1) % HERO_SLIDES.length)
     }, 6000)
     return () => clearInterval(t)
   }, [])
@@ -120,7 +108,9 @@ function HeroSlider() {
       </AnimatePresence>
 
       {/* Content */}
-      <div className={`absolute inset-0 flex flex-col justify-end px-8 sm:px-16 md:px-24 pb-16 md:pb-24 ${slide.align === 'right' ? 'items-end text-right' : slide.align === 'center' ? 'items-center text-center' : 'items-start'}`}>
+      <div
+        className={`absolute inset-0 flex flex-col justify-end px-8 sm:px-16 md:px-24 pb-16 md:pb-24 ${slide.align === 'right' ? 'items-end text-right' : slide.align === 'center' ? 'items-center text-center' : 'items-start'}`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -130,10 +120,17 @@ function HeroSlider() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-xl"
           >
-            <p className="text-[10px] uppercase tracking-[0.4em] text-white/70 mb-4 font-body">{slide.tag}</p>
-            <h1 className="font-display text-white leading-none mb-4" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', letterSpacing: '-0.04em' }}>
+            <p className="text-[10px] uppercase tracking-[0.4em] text-white/70 mb-4 font-body">
+              {slide.tag}
+            </p>
+            <h1
+              className="font-display text-white leading-none mb-4"
+              style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', letterSpacing: '-0.04em' }}
+            >
               {slide.title.map((line, i) => (
-                <span key={i} className="block">{line}</span>
+                <span key={i} className="block">
+                  {line}
+                </span>
               ))}
             </h1>
             <p className="text-sm text-white/60 font-body mb-8">{slide.sub}</p>
@@ -155,7 +152,9 @@ function HeroSlider() {
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
         {HERO_SLIDES.map((_, i) => (
           <button key={i} onClick={() => go(i)} className="group p-1">
-            <div className={`h-px transition-all duration-500 ${i === current ? 'w-10 bg-white' : 'w-4 bg-white/40 group-hover:bg-white/70'}`} />
+            <div
+              className={`h-px transition-all duration-500 ${i === current ? 'w-10 bg-white' : 'w-4 bg-white/40 group-hover:bg-white/70'}`}
+            />
           </button>
         ))}
       </div>
@@ -190,7 +189,15 @@ function HeroSlider() {
 // ─── Marquee ──────────────────────────────────────────────────────────────────
 
 function Marquee() {
-  const items = ['Free Returns', 'New Season', 'Handcrafted in Italy', 'Sustainable Luxury', 'Complimentary Shipping', 'SS26 Collection', 'Made to Last']
+  const items = [
+    'Free Returns',
+    'New Season',
+    'Handcrafted in Italy',
+    'Sustainable Luxury',
+    'Complimentary Shipping',
+    'SS26 Collection',
+    'Made to Last',
+  ]
   const repeated = [...items, ...items, ...items]
 
   return (
@@ -201,7 +208,10 @@ function Marquee() {
         className="flex gap-0 whitespace-nowrap"
       >
         {repeated.map((item, i) => (
-          <span key={i} className="inline-flex items-center gap-6 px-6 text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-body">
+          <span
+            key={i}
+            className="inline-flex items-center gap-6 px-6 text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-body"
+          >
             {item}
             <span className="w-1 h-1 rounded-full bg-muted-foreground/40 flex-shrink-0" />
           </span>
@@ -210,13 +220,6 @@ function Marquee() {
     </div>
   )
 }
-
-
-
-
-
-
-
 
 // ─── Editorial Banner ─────────────────────────────────────────────────────────
 
@@ -272,19 +275,16 @@ function EditorialBanner() {
   )
 }
 
-
-
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
-
   return (
     <div className="min-h-screen bg-background text-foreground mt-20">
       <AnnouncementBar />
       <main>
         <HeroSlider />
         <Marquee />
+        <ProductCardSection />
         <CategorySection />
         <EditorialBanner />
         <InstagramSection />

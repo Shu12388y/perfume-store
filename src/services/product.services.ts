@@ -15,10 +15,10 @@ export const get_products = createAsyncThunk('products', async (_, thunkAPI) => 
   }
 })
 
-export const get_product = createAsyncThunk('product', async (id, thunkAPI) => {
+export const get_product = createAsyncThunk('product', async (id: string, thunkAPI) => {
   try {
     const response = await fetch(
-      `/api/products/${id}?depth=1&draft=false&locale=undefined&trash=false`,
+      `/api/products/${id}?depth=2&draft=false&locale=undefined&trash=false`,
       {
         method: 'GET',
         headers: {

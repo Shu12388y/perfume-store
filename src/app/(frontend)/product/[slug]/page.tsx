@@ -1,11 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   ShoppingBag,
-  Heart,
-  Share2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -16,28 +14,15 @@ import {
   Plus,
   Minus,
   Check,
-  ArrowRight,
   ZoomIn,
 } from 'lucide-react'
-
-
-
-interface Review {
-  id: number
-  name: string
-  rating: number
-  date: string
-  body: string
-  verified: boolean
-}
-
-interface RelatedProduct {
-  id: number
-  name: string
-  price: number
-  image: string
-  category: string
-}
+import { useParams } from 'next/navigation'
+import { useSelector, useDispatch } from 'react-redux'
+import type { AppDispatch, RootState } from '@/store'
+import { get_product } from '@/services/product.services'
+import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
+import type { Product, Media } from '@/payload-types'
 
 const PRODUCT = {
   name: 'Velvet Noir Blazer',
@@ -94,64 +79,6 @@ const PRODUCT = {
   ],
 }
 
-const REVIEWS: Review[] = [
-  {
-    id: 1,
-    name: 'Margaux L.',
-    rating: 5,
-    date: 'Jan 12, 2025',
-    verified: true,
-    body: 'Absolutely stunning piece. The velvet quality is exceptional — rich and deep, nothing like fast fashion. I wore it to three events in one week and received compliments at every single one.',
-  },
-  {
-    id: 2,
-    name: 'Sofia R.',
-    rating: 5,
-    date: 'Dec 28, 2024',
-    verified: true,
-    body: 'Fits like a dream. I sized up from my usual S to M for a more relaxed shoulder and it was the right call. The lining is incredibly smooth.',
-  },
-  {
-    id: 3,
-    name: 'Ines K.',
-    rating: 4,
-    date: 'Dec 3, 2024',
-    verified: true,
-    body: 'Beautiful blazer. The only reason for 4 stars is the delivery took a bit longer than expected. The product itself is flawless — structured yet comfortable.',
-  },
-]
-
-const RELATED: RelatedProduct[] = [
-  {
-    id: 1,
-    name: 'Silk Slip Dress',
-    price: 320,
-    category: 'Dresses',
-    image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80',
-  },
-  {
-    id: 2,
-    name: 'Cashmere Turtleneck',
-    price: 280,
-    category: 'Tops',
-    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80',
-  },
-  {
-    id: 3,
-    name: 'Wide Leg Trousers',
-    price: 195,
-    category: 'Bottoms',
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80',
-  },
-  {
-    id: 4,
-    name: 'Merino Wrap Coat',
-    price: 540,
-    category: 'Outerwear',
-    image: 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=600&q=80',
-  },
-]
-
 function Stars({ rating, size = 12 }: { rating: number; size?: number }) {
   return (
     <div className="flex gap-0.5">
@@ -202,7 +129,17 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
   )
 }
 
-function ImageGallery({ images }: { images: string[] }) {
+function getMediaUrl(title: (string | null) | Media | undefined): string {
+  if (title && typeof title === 'object') return title.url ?? ''
+  return ''
+}
+
+function getMediaFilename(title: (string | null) | Media | undefined): string {
+  if (title && typeof title === 'object') return title.filename ?? ''
+  return ''
+}
+
+function ImageGallery({ images }: { images: NonNullable<Product['images']> }) {
   const [active, setActive] = useState(0)
   const [zoomed, setZoomed] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 })
@@ -218,17 +155,22 @@ function ImageGallery({ images }: { images: string[] }) {
   return (
     <div className="flex gap-4">
       {/* Thumbnails */}
-      <div className="hidden sm:flex flex-col gap-2 w-16 flex-shrink-0">
+      <div className="hidden sm:flex flex-col gap-2 w-16 shrink-0">
         {images.map((img, i) => (
           <motion.button
             key={i}
             onClick={() => setActive(i)}
             whileHover={{ scale: 1.04 }}
-            className={`aspect-[3/4] overflow-hidden rounded-sm border-2 transition-colors duration-150 ${
+            className={`aspect-3/4 overflow-hidden rounded-sm border-2 transition-colors duration-150 ${
               active === i ? 'border-foreground' : 'border-transparent'
             }`}
           >
-            <img src={img} alt="" className="w-full h-full object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getMediaUrl(img?.title)}
+              alt={getMediaFilename(img?.title)}
+              className="w-full h-full object-cover"
+            />
           </motion.button>
         ))}
       </div>
@@ -236,11 +178,7 @@ function ImageGallery({ images }: { images: string[] }) {
       {/* Main image */}
       <div className="flex-1 relative">
         {/* Badge */}
-        {PRODUCT.isNew && (
-          <div className="absolute top-4 left-4 z-10 bg-foreground text-background text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-sm">
-            New Season
-          </div>
-        )}
+
         <div className="absolute top-4 right-4 z-10 flex gap-2">
           <button
             onClick={() => setZoomed((v) => !v)}
@@ -258,12 +196,12 @@ function ImageGallery({ images }: { images: string[] }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className={`aspect-[3/4] overflow-hidden rounded-sm bg-secondary relative ${zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+            className={`aspect-3/4 overflow-hidden rounded-sm bg-secondary relative ${zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
             onMouseMove={handleMouseMove}
             onClick={() => setZoomed((v) => !v)}
           >
             <motion.img
-              src={images[active]}
+              src={getMediaUrl(images[active]?.title)}
               alt={PRODUCT.name}
               className="w-full h-full object-cover"
               animate={
@@ -343,30 +281,49 @@ function AddedToast({ visible }: { visible: boolean }) {
 }
 
 export default function Page() {
-  const [selectedColor, setSelectedColor] = useState(0)
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const slug = useParams()
+  const { loading, error, product_data } = useSelector((state: RootState) => state.product)
+  const dispatch = useDispatch<AppDispatch>()
   const [quantity, setQuantity] = useState(1)
-  const [wishlisted, setWishlisted] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
-  const [sizeError, setSizeError] = useState(false)
+  const [price, setPrice] = useState('')
 
-  const activeColor = PRODUCT.colors[selectedColor]
   const discount = Math.round((1 - PRODUCT.price / PRODUCT.comparePrice) * 100)
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      setSizeError(true)
-      setTimeout(() => setSizeError(false), 2000)
+    if (!1) {
       return
     }
     setAddedToCart(true)
     setTimeout(() => setAddedToCart(false), 3000)
   }
 
+  useEffect(() => {
+    dispatch(get_product(slug.slug as string)).unwrap()
+  }, [slug.slug, dispatch])
+
+  useEffect(() => {
+    const firstVariant = product_data?.variants?.[0]?.variant
+    setPrice((firstVariant && typeof firstVariant === 'object' ? firstVariant.price : null) || '0')
+  }, [product_data])
+
+  if (loading) {
+    return <>Loading</>
+  }
+
+  if (error) {
+    return <>Error</>
+  }
+
+  console.log(product_data)
+
+  const Content = ({ data }: { data: SerializedEditorState }) => {
+    const html = convertLexicalToHTML({ data })
+
+    return <div dangerouslySetInnerHTML={{ __html: html }} />
+  }
   return (
     <div className="min-h-screen bg-background text-foreground">
-    
-
       {/* ── Main Content ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-10 lg:gap-20 items-start">
@@ -376,7 +333,7 @@ export default function Page() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ImageGallery images={activeColor.images} />
+            <ImageGallery images={product_data?.images ?? []} />
           </motion.div>
 
           {/* RIGHT: Product Info */}
@@ -391,11 +348,6 @@ export default function Page() {
               <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-body">
                 {PRODUCT.category}
               </p>
-              {PRODUCT.isNew && (
-                <span className="text-[9px] uppercase tracking-widest bg-foreground text-background px-2 py-0.5 rounded-sm">
-                  New
-                </span>
-              )}
             </div>
 
             {/* Title */}
@@ -403,9 +355,9 @@ export default function Page() {
               className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-1"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {PRODUCT.name}
+              {product_data?.name}
             </h1>
-            <p className="text-sm text-muted-foreground font-body mb-4">{PRODUCT.subtitle}</p>
+            {/* <p className="text-sm text-muted-foreground font-body mb-4">{PRODUCT.subtitle}</p> */}
 
             {/* Rating */}
             <div className="flex items-center gap-3 mb-6">
@@ -417,7 +369,7 @@ export default function Page() {
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-8">
-              <span className="font-display text-2xl text-foreground">${PRODUCT.price}</span>
+              <span className="font-display text-2xl text-foreground">RS {price}</span>
               <span className="text-sm text-muted-foreground line-through font-body">
                 ${PRODUCT.comparePrice}
               </span>
@@ -428,66 +380,30 @@ export default function Page() {
 
             <div className="h-px bg-border mb-7" />
 
-            {/* Color selector */}
+            {/* selector */}
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs uppercase tracking-widest text-foreground font-medium">
-                  Color
-                </p>
-                <p className="text-xs text-muted-foreground font-body">{activeColor.name}</p>
-              </div>
               <div className="flex gap-2.5">
-                {PRODUCT.colors.map((color, i) => (
-                  <motion.button
-                    key={i}
-                    onClick={() => setSelectedColor(i)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    title={color.name}
-                    className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ${
-                      selectedColor === i ? 'border-foreground scale-110' : 'border-transparent'
-                    }`}
-                    style={{
-                      backgroundColor: color.hex,
-                      boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.15)',
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Size selector */}
-            <div className="mb-7">
-              <div className="flex items-center justify-between mb-3">
-                <p
-                  className={`text-xs uppercase tracking-widest font-medium transition-colors ${sizeError ? 'text-red-500' : 'text-foreground'}`}
-                >
-                  {sizeError ? 'Please select a size' : 'Size'}
-                </p>
-                <button className="text-xs text-muted-foreground underline underline-offset-2 font-body hover:text-foreground transition-colors">
-                  Size guide
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {PRODUCT.sizes.map((size) => (
-                  <motion.button
-                    key={size}
-                    onClick={() => {
-                      setSelectedSize(size)
-                      setSizeError(false)
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`min-w-[3rem] h-10 px-3 text-xs uppercase tracking-widest rounded-sm border transition-all duration-150 ${
-                      selectedSize === size
-                        ? 'border-foreground bg-foreground text-background'
-                        : sizeError
-                          ? 'border-red-300 text-muted-foreground hover:border-foreground hover:text-foreground'
-                          : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {size}
-                  </motion.button>
-                ))}
+                {product_data?.variants?.map((v, i) => {
+                  const variant = v?.variant && typeof v.variant === 'object' ? v.variant : null
+                  const imgSrc =
+                    variant?.img && typeof variant.img === 'object' ? (variant.img.url ?? '') : ''
+                  return (
+                    <motion.button
+                      key={i}
+                      onClick={() => variant && setPrice(variant.price)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      title={variant?.content ?? undefined}
+                      className={`w-8 h-8 rounded-full border-2 transition-all duration-200`}
+                      style={{
+                        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.15)',
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={imgSrc} alt="" />
+                    </motion.button>
+                  )
+                })}
               </div>
             </div>
 
@@ -519,18 +435,6 @@ export default function Page() {
                 <ShoppingBag size={14} />
                 Add to Bag
               </motion.button>
-
-              {/* Wishlist */}
-              <motion.button
-                onClick={() => setWishlisted((v) => !v)}
-                whileTap={{ scale: 0.9 }}
-                className="w-12 h-12 border border-border rounded-sm flex items-center justify-center hover:border-foreground transition-colors"
-              >
-                <Heart
-                  size={15}
-                  className={`transition-colors ${wishlisted ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`}
-                />
-              </motion.button>
             </div>
 
             {/* Buy now */}
@@ -558,26 +462,10 @@ export default function Page() {
               ))}
             </div>
 
-            {/* Share */}
-            <button className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors mb-8">
-              <Share2 size={12} />
-              <span className="uppercase tracking-widest">Share</span>
-            </button>
-
             {/* Accordions */}
             <div className="border-t border-border">
               <Accordion title="Description">
-                <p>{PRODUCT.description}</p>
-              </Accordion>
-              <Accordion title="Details & Composition">
-                <ul className="space-y-1.5">
-                  {PRODUCT.details.map((d, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="w-1 h-1 rounded-full bg-muted-foreground/50 mt-1.5 flex-shrink-0" />
-                      {d}
-                    </li>
-                  ))}
-                </ul>
+                <p>{product_data?.description}</p>
               </Accordion>
               <Accordion title="Shipping & Returns">
                 <div className="space-y-3">
@@ -597,141 +485,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* ── Reviews ── */}
-      <section className="border-t border-border bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-12">
-            {/* Summary */}
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3 font-body">
-                Customer Reviews
-              </p>
-              <div className="flex items-baseline gap-3 mb-3">
-                <span className="font-display text-5xl">{PRODUCT.rating}</span>
-                <span className="text-sm text-muted-foreground font-body">/ 5</span>
-              </div>
-              <Stars rating={PRODUCT.rating} size={16} />
-              <p className="text-xs text-muted-foreground mt-2 font-body">
-                Based on {PRODUCT.reviewCount} reviews
-              </p>
-
-              {/* Rating bars */}
-              <div className="mt-6 space-y-2">
-                {[5, 4, 3, 2, 1].map((star) => {
-                  const pct =
-                    star === 5 ? 78 : star === 4 ? 16 : star === 3 ? 4 : star === 2 ? 1 : 1
-                  return (
-                    <div
-                      key={star}
-                      className="flex items-center gap-3 text-xs text-muted-foreground"
-                    >
-                      <span className="w-3">{star}</span>
-                      <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${pct}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.7, delay: (5 - star) * 0.05 }}
-                          className="h-full bg-amber-400 rounded-full"
-                        />
-                      </div>
-                      <span className="w-6 text-right">{pct}%</span>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <button className="mt-8 w-full h-10 border border-foreground text-xs uppercase tracking-widest rounded-sm hover:bg-foreground hover:text-background transition-all duration-200">
-                Write a Review
-              </button>
-            </div>
-
-            {/* Review list */}
-            <div className="space-y-8">
-              {REVIEWS.map((review, i) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="pb-8 border-b border-border last:border-0"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="text-sm font-medium text-foreground">{review.name}</p>
-                        {review.verified && (
-                          <span className="text-[9px] uppercase tracking-widest text-green-600 dark:text-green-400 flex items-center gap-0.5">
-                            <Check size={9} /> Verified
-                          </span>
-                        )}
-                      </div>
-                      <Stars rating={review.rating} size={11} />
-                    </div>
-                    <p className="text-[10px] text-muted-foreground font-body">{review.date}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground font-body leading-relaxed mt-3">
-                    {review.body}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── You May Also Like ── */}
-      <section className="border-t border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-16">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2 font-body">
-                Complete the Look
-              </p>
-              <h2 className="font-display text-3xl" style={{ letterSpacing: '-0.02em' }}>
-                You May Also Like
-              </h2>
-            </div>
-            <a
-              href="#"
-              className="hidden sm:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-            >
-              View all <ArrowRight size={12} />
-            </a>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            {RELATED.map((product, i) => (
-              <motion.a
-                key={product.id}
-                href="#"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="group cursor-pointer"
-              >
-                <div className="aspect-[3/4] overflow-hidden rounded-sm bg-secondary mb-3">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5 font-body">
-                  {product.category}
-                </p>
-                <h4 className="font-display text-base text-foreground leading-tight mb-1">
-                  {product.name}
-                </h4>
-                <p className="text-sm font-body text-foreground">${product.price}</p>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Sticky Add to Cart (mobile) ── */}
       <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur border-t border-border px-4 py-3 flex gap-3">
         <div className="flex-1">
@@ -746,6 +499,10 @@ export default function Page() {
           <ShoppingBag size={13} />
           Add to Bag
         </motion.button>
+      </div>
+
+      <div>
+        {product_data?.content && <Content data={product_data.content as SerializedEditorState} />}
       </div>
 
       <AddedToast visible={addedToCart} />

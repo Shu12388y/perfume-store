@@ -41,7 +41,7 @@ const Navbar = () => {
 
         <Link href="/" className="absolute left-1/2 -translate-x-1/2">
           <h1 className="font-display text-2xl tracking-[0.3em] uppercase text-gradient-gold">
-            Aurum
+            Fayakun Attar
           </h1>
         </Link>
 
@@ -61,13 +61,13 @@ const Navbar = () => {
             className="md:hidden overflow-hidden border-t border-border"
           >
             <div className="px-6 py-6 flex flex-col gap-4">
-              {['Shop', 'Collections', 'About'].map((item) => (
+              {links.map((item) => (
                 <Link
-                  key={item}
-                  href="#"
+                  key={item.id}
+                  href={item.url}
                   className="text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {item}
+                  {item.title}
                 </Link>
               ))}
             </div>
